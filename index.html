@@ -1,48 +1,28 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Internet Archive ランダムDL</title>
+  <title>Webhook送信</title>
 </head>
 <body>
+  <button onclick="sendMessage()">送信</button>
 
-<button onclick="downloadRandom()">ランダムファイル取得</button>
+  <script>
+    function sendMessage() {
+      const webhookURL = "https://discord.com/api/webhooks/1517462215337447514/97GElwMvhsrcTmkUcB-HlAaomYFkr464-x25V6iQOg5BZDUARSe2Ww4GzTAVxnyJmaZs";
 
-<script>
-async function downloadRandom() {
-  try {
-    // ランダムなオフセット（適当な範囲）
-    const randomOffset = Math.floor(Math.random() * 10000);
-
-    const url = `https://archive.org/advancedsearch.php?q=mediatype:(movies OR audio OR texts)&fl[]=identifier&rows=1&page=${randomOffset}&output=json`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const docs = data.response.docs;
-    if (docs.length === 0) {
-      alert("見つかりませんでした");
-      return;
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content: "こんにちは！これはテストメッセージです"
+        })
+      })
+      .then(res => alert("送信成功"))
+      .catch(err => alert("エラー: " + err));
     }
-
-    const id = docs[0].identifier;
-
-    // ダウンロードURL（例：zip）
-    const downloadUrl = `https://archive.org/download/${id}/${id}.zip`;
-
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = "";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-  } catch (e) {
-    console.error(e);
-    alert("エラー発生");
-  }
-}
-</script>
-
+  </script>
 </body>
 </html>
